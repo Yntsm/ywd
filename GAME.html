@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>دائرة الوحدة - شرح الدوال المثلثية</title>
+  <style>
+    /* Reset بسيط */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      color: #222;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1 {
+      background: #0077b6;
+      color: white;
+      padding: 1.5rem 1rem;
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .container {
+      flex: 1;
+      max-width: 900px;
+      margin: 1rem auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: row;
+      gap: 1.5rem;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      min-width: 220px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+      text-align: right;
+    }
+    select {
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1.8px solid #0077b6;
+      background: #e1f0fb;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      outline-offset: 2px;
+    }
+    select:hover,
+    select:focus {
+      background: #d0e7fb;
+      outline: none;
+      border-color: #005f8f;
+    }
+    canvas {
+      flex: 1;
+      max-width: 400px;
+      max-height: 400px;
+      width: 100%;
+      height: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      transition: box-shadow 0.3s ease;
+    }
+    canvas:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    .info {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      text-align: right;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 350px;
+      min-width: 280px;
+    }
+    .info h2 {
+      margin-top: 0;
+      color: #0077b6;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      font-size: 1.4rem;
+    }
+    @media (max-width: 860px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .info, .controls, canvas {
+        max-width: 90vw;
+        min-width: auto;
+        width: 100%;
+      }
+      .info {
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🧭 شرح الدوال المثلثية على دائرة الوحدة</h1>
+
+  <div class="container">
+    <div class="controls">
+      <label for="angleSelect">اختر الزاوية:</label>
+      <select id="angleSelect" aria-label="اختر الزاوية"></select>
+
+      <label for="funcSelect">اختر الدالة:</label>
+      <select id="funcSelect" aria-label="اختر الدالة">
+        <option value="sin">جا (sin)</option>
+        <option value="cos">جتا (cos)</option>
+        <option value="tan">ظا (tan)</option>
+        <option value="cot">ظتا (cot)</option>
+        <option value="sec">قا (sec)</option>
+        <option value="csc">قتا (csc)</option>
+      </select>
+    </div>
+
+    <canvas id="unitCircle" width="400" height="400" role="img" aria-label="دائرة الوحدة"></canvas>
+
+    <div class="info" id="infoBox" tabindex="0">
+      <h2>معلومة الدالة:</h2>
+      <p>اختر زاوية ودالة لعرض الشرح.</p>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('unitCircle');
+    const ctx = canvas.getContext('2d');
+    const angleSelect = document.getElementById('angleSelect');
+    const funcSelect = document.getElementById('funcSelect');
+    const infoBox = document.getElementById('infoBox');
+
+    const degrees = [0, 30, 45, 60, 90, 120, 150, 180, 270, 360];
+
+    // القيم النصية حسب الدالة والزاوية (تأكدت من القيم التي أعطيتها)
+    const values = {
+      sin: {
+        0: {value: "0"},
+        30: {value: "1÷2"},
+        45: {value: "1÷جذر٢"},
+        60: {value: "جذر٣÷٢"},
+        90: {value: "1"},
+        120: {value: "جذر٣÷٢"},
+        150: {value: "1÷2"},
+        180: {value: "0"},
+        270: {value: "-1"},
+        360: {value: "0"},
+      },
+      cos: {
+        0: {value: "1"},
+        30: {value: "جذر٣÷٢"},
+        45: {value: "1÷جذر٢"},
+        60: {value: "1÷2"},
+        90: {value: "0"},
+        120: {value: "-1÷2"},
+        150: {value: "-جذر٣÷٢"},
+        180: {value: "-1"},
+        270: {value: "0"},
+        360: {value: "1"},
+      },
+      tan: {
+        0: {value: "0"},
+        30: {value: "1÷√3"},
+        45: {value: "1"},
+        60: {value: "√3"},
+        90: {value: "غير معرف"},
+        120: {value: "-√3"},
+        150: {value: "-1"},
+        180: {value: "0"},
+        270: {value: "غير معرف"},
+        360: {value: "0"},
+      },
+      cot: {
+        0: {value: "غير معرف"},
+        30: {value: "√3"},
+        45: {value: "1"},
+        60: {value: "1÷√3"},
+        90: {value: "0"},
+        120: {value: "-1÷√3"},
+        150: {value: "-√3"},
+        180: {value: "غير معرف"},
+        270: {value: "0"},
+        360: {value: "غير معرف"},
+      },
+      sec: {
+        0: {value: "1"},
+        30: {value: "2÷√3"},
+        45: {value: "√2"},
+        60: {value: "2"},
+        90: {value: "غير معرف"},
+        120: {value: "-2"},
+        150: {value: "-2÷√3"},
+        180: {value: "-1"},
+        270: {value: "غير معرف"},
+        360: {value: "1"},
+      },
+      csc: {
+        0: {value: "غير معرف"},
+        30: {value: "2"},
+        45: {value: "√2"},
+        60: {value: "2÷√3"},
+        90: {value: "1"},
+        120: {value: "2÷√3"},
+        150: {value: "2"},
+        180: {value: "غير معرف"},
+        270: {value: "-1"},
+        360: {value: "غير معرف"},
+      }
+    };
+
+    // نرسم دائرة الوحدة مع السهم على الزاوية المختارة
+    function drawUnitCircle(angle) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY) - 40;
+
+      // دائرة الوحدة
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = "#0077b6";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(0, 119, 182, 0.4)";
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // خطوط المحاور
+      ctx.beginPath();
+      ctx.strokeStyle = "#888";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      ctx.moveTo(centerX, centerY - radius);
+      ctx.lineTo(centerX, centerY + radius);
+      ctx.moveTo(centerX - radius, centerY);
+      ctx.lineTo(centerX + radius, centerY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // زاوية بالراديان
+      const rad = angle * Math.PI / 180;
+
+      // نقطة على الدائرة
+      const x = centerX + radius * Math.cos(rad);
+      const y = centerY - radius * Math.sin(rad);
+
+      // السهم
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(255,0,0,0.6)";
+      ctx.shadowBlur = 8;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // نقطة على الدائرة
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = "#0077b6";
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#003f5c";
+      ctx.stroke();
+
+      // نص الزاوية داخل الدائرة
+      ctx.fillStyle = "#0077b6";
+      ctx.font = "bold 20px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+      ctx.fillText(angle + "°", centerX - 25, centerY + 30);
+    }
+
+    function updateInfo() {
+      const angle = parseInt(angleSelect.value);
+      const func = funcSelect.value;
+      drawUnitCircle(angle);
+
+      const data = values[func][angle];
+      if (data) {
+        infoBox.innerHTML = `
+          <h2>الدالة: ${funcSelect.options[funcSelect.selectedIndex].text} (${angle}°)</h2>
+          <p>📐 <b>القيمة :</b> ${data.value}</p>
+          <p>📊 <b>الزاوية على دائرة الوحدة:</b> ${angle}°</p>
+          <p>🔍 <i>شرح مرئي يوضح العلاقة الهندسية في الدائرة</i></p>
+        `;
+      } else {
+        infoBox.innerHTML = `<p>❌ لا توجد قيمة معرفة لهذه الدالة عند هذه الزاوية.</p>`;
+      }
+    }
+
+    // تحميل الزوايا في القائمة
+    degrees.forEach(deg => {
+      const opt = document.createElement('option');
+      opt.value = deg;
+      opt.textContent = deg + "°";
+      angleSelect.appendChild(opt);
+    });
+
+    angleSelect.value = "30";
+    funcSelect.value = "sin";
+
+    angleSelect.addEventListener('change', updateInfo);
+    funcSelect.addEventListener('change', updateInfo);
+
+    updateInfo();
+  </script>
+</body>
+</html>
