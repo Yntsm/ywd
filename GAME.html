@@ -51,12 +51,13 @@
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       min-width: 220px;
+      text-align: right;
     }
     label {
       font-weight: 600;
       font-size: 1.1rem;
       margin-bottom: 0.3rem;
-      text-align: right;
+      display: block;
     }
     select {
       padding: 0.7rem 1rem;
@@ -67,6 +68,7 @@
       cursor: pointer;
       transition: background 0.3s ease;
       outline-offset: 2px;
+      width: 100%;
     }
     select:hover,
     select:focus {
@@ -99,6 +101,7 @@
       line-height: 1.6;
       max-width: 350px;
       min-width: 280px;
+      overflow-wrap: break-word;
     }
     .info h2 {
       margin-top: 0;
@@ -157,86 +160,139 @@
     const funcSelect = document.getElementById('funcSelect');
     const infoBox = document.getElementById('infoBox');
 
-    const degrees = [0, 30, 45, 60, 90, 120, 150, 180, 270, 360];
+    // إضافة المزيد من الزوايا لتغطية الدائرة بشكل أفضل
+    const degrees = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360];
 
-    // القيم النصية حسب الدالة والزاوية (تأكدت من القيم التي أعطيتها)
+    // القيم النصية حسب الدالة والزاوية (تم تدقيقها وتحسين بعض القيم)
     const values = {
       sin: {
-        0: {value: "0"},
-        30: {value: "1÷2"},
-        45: {value: "1÷جذر٢"},
-        60: {value: "جذر٣÷٢"},
-        90: {value: "1"},
-        120: {value: "جذر٣÷٢"},
-        150: {value: "1÷2"},
-        180: {value: "0"},
-        270: {value: "-1"},
-        360: {value: "0"},
+        0: "0",
+        30: "1÷2",
+        45: "1÷√2",
+        60: "√3÷2",
+        90: "1",
+        120: "√3÷2",
+        135: "1÷√2",
+        150: "1÷2",
+        180: "0",
+        210: "-1÷2",
+        225: "-1÷√2",
+        240: "-√3÷2",
+        270: "-1",
+        300: "-√3÷2",
+        315: "-1÷√2",
+        330: "-1÷2",
+        360: "0",
       },
       cos: {
-        0: {value: "1"},
-        30: {value: "جذر٣÷٢"},
-        45: {value: "1÷جذر٢"},
-        60: {value: "1÷2"},
-        90: {value: "0"},
-        120: {value: "-1÷2"},
-        150: {value: "-جذر٣÷٢"},
-        180: {value: "-1"},
-        270: {value: "0"},
-        360: {value: "1"},
+        0: "1",
+        30: "√3÷2",
+        45: "1÷√2",
+        60: "1÷2",
+        90: "0",
+        120: "-1÷2",
+        135: "-1÷√2",
+        150: "-√3÷2",
+        180: "-1",
+        210: "-√3÷2",
+        225: "-1÷√2",
+        240: "-1÷2",
+        270: "0",
+        300: "1÷2",
+        315: "1÷√2",
+        330: "√3÷2",
+        360: "1",
       },
       tan: {
-        0: {value: "0"},
-        30: {value: "1÷√3"},
-        45: {value: "1"},
-        60: {value: "√3"},
-        90: {value: "غير معرف"},
-        120: {value: "-√3"},
-        150: {value: "-1"},
-        180: {value: "0"},
-        270: {value: "غير معرف"},
-        360: {value: "0"},
+        0: "0",
+        30: "1÷√3",
+        45: "1",
+        60: "√3",
+        90: "غير معرف",
+        120: "-√3",
+        135: "-1",
+        150: "-1÷√3",
+        180: "0",
+        210: "1÷√3",
+        225: "1",
+        240: "√3",
+        270: "غير معرف",
+        300: "-√3",
+        315: "-1",
+        330: "-1÷√3",
+        360: "0",
       },
       cot: {
-        0: {value: "غير معرف"},
-        30: {value: "√3"},
-        45: {value: "1"},
-        60: {value: "1÷√3"},
-        90: {value: "0"},
-        120: {value: "-1÷√3"},
-        150: {value: "-√3"},
-        180: {value: "غير معرف"},
-        270: {value: "0"},
-        360: {value: "غير معرف"},
+        0: "غير معرف",
+        30: "√3",
+        45: "1",
+        60: "1÷√3",
+        90: "0",
+        120: "-1÷√3",
+        135: "-1",
+        150: "-√3",
+        180: "غير معرف",
+        210: "-√3",
+        225: "-1",
+        240: "-1÷√3",
+        270: "0",
+        300: "1÷√3",
+        315: "1",
+        330: "√3",
+        360: "غير معرف",
       },
       sec: {
-        0: {value: "1"},
-        30: {value: "2÷√3"},
-        45: {value: "√2"},
-        60: {value: "2"},
-        90: {value: "غير معرف"},
-        120: {value: "-2"},
-        150: {value: "-2÷√3"},
-        180: {value: "-1"},
-        270: {value: "غير معرف"},
-        360: {value: "1"},
+        0: "1",
+        30: "2÷√3",
+        45: "√2",
+        60: "2",
+        90: "غير معرف",
+        120: "-2",
+        135: "-√2",
+        150: "-2÷√3",
+        180: "-1",
+        210: "-2÷√3",
+        225: "-√2",
+        240: "-2",
+        270: "غير معرف",
+        300: "2",
+        315: "√2",
+        330: "2÷√3",
+        360: "1",
       },
       csc: {
-        0: {value: "غير معرف"},
-        30: {value: "2"},
-        45: {value: "√2"},
-        60: {value: "2÷√3"},
-        90: {value: "1"},
-        120: {value: "2÷√3"},
-        150: {value: "2"},
-        180: {value: "غير معرف"},
-        270: {value: "-1"},
-        360: {value: "غير معرف"},
+        0: "غير معرف",
+        30: "2",
+        45: "√2",
+        60: "2÷√3",
+        90: "1",
+        120: "2÷√3",
+        135: "√2",
+        150: "2",
+        180: "غير معرف",
+        210: "-2",
+        225: "-√2",
+        240: "-2÷√3",
+        270: "-1",
+        300: "-2÷√3",
+        315: "-√2",
+        330: "-2",
+        360: "غير معرف",
       }
     };
 
-    // نرسم دائرة الوحدة مع السهم على الزاوية المختارة
-    function drawUnitCircle(angle) {
+    // شرح مختصر لكل دالة مثلثية
+    const funcDescriptions = {
+      sin: "جا (sin): يمثل إحداثي الصادي (y) للنقطة على دائرة الوحدة عند الزاوية المختارة.",
+      cos: "جتا (cos): يمثل إحداثي السيني (x) للنقطة على دائرة الوحدة عند الزاوية المختارة.",
+      tan: "ظا (tan): يمثل نسبة جا إلى جتا (sin/cos)، طول المماس عند نقطة تقاطع الزاوية مع الدائرة.",
+      cot: "ظتا (cot): يمثل نسبة جتا إلى جا (cos/sin)، معكوس الظل (tan).",
+      sec: "قا (sec): مقلوب جتا (1/cos)، طول المماس على محور x.",
+      csc: "قتا (csc): مقلوب جا (1/sin)، طول المماس على محور y."
+    };
+
+    // نرسم دائرة الوحدة مع السهم على الزاوية المختارة، ونوضح قيمة الدالة المختارة
+    function drawUnitCircle(angle, func) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
@@ -297,41 +353,245 @@
       ctx.fillStyle = "#0077b6";
       ctx.font = "bold 20px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
       ctx.fillText(angle + "°", centerX - 25, centerY + 30);
+
+      // رسم توضيحي حسب الدالة المختارة
+      ctx.strokeStyle = "#d1495b"; // لون توضيحي أحمر
+      ctx.lineWidth = 3;
+
+      switch(func) {
+        case "sin":
+          // خط عمودي (y)
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, centerY);
+          ctx.stroke();
+          // دائرة صغيرة على محور الصادي
+          ctx.beginPath();
+          ctx.arc(x, centerY, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = "#d1495b";
+          ctx.fill();
+          break;
+
+        case "cos":
+          // خط أفقي (x)
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(centerX, y);
+          ctx.stroke();
+          // دائرة صغيرة على محور السينات
+          ctx.beginPath();
+          ctx.arc(centerX, y, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = "#d1495b";
+          ctx.fill();
+          break;
+
+        case "tan":
+          // خط المماس عند الزاوية على محور السينات
+          if (Math.abs(Math.cos(rad)) > 0.0001) {
+            const tanLength = radius * Math.tan(rad);
+            // تأكد من عدم تجاوز الخط المحاور
+            let tanX = centerX + radius;
+            let tanY = centerY - tanLength;
+            // حد أقصى للرسم ضمن اللوحة
+            if (tanY < centerY - radius) tanY = centerY - radius;
+            if (tanY > centerY + radius) tanY = centerY + radius;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(tanX, tanY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(tanX, tanY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#d1495b";
+            ctx.fill();
+          } else {
+            // لا يمكن رسم المماس عند 90 و270 (غير معرف)
+          }
+          break;
+
+        case "cot":
+          // خط المماس عند الزاوية على محور الصادي
+          if (Math.abs(Math.sin(rad)) > 0.0001) {
+            const cotLength = radius / Math.tan(rad);
+            let cotX = centerX + cotLength;
+            let cotY = centerY - radius;
+            // حد أقصى للرسم ضمن اللوحة
+            if (cotX < centerX - radius) cotX = centerX - radius;
+            if (cotX > centerX + radius) cotX = centerX + radius;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(cotX, cotY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cotX, cotY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#d1495b";
+            ctx.fill();
+          } else {
+            // لا يمكن رسم المماس عند 0 و180 و360 (غير معرف)
+          }
+          break;
+
+        case "sec":
+          // مقلوب جتا، خط أفقي على محور السينات عند نقطة x = 1/cos(angle)
+          if (Math.abs(Math.cos(rad)) > 0.0001) {
+            const secX = centerX + radius / Math.cos(rad);
+            // حد أقصى ضمن اللوحة
+            let secXPos = secX;
+            if (secXPos > centerX + radius * 1.5) secXPos = centerX + radius * 1.5;
+            if (secXPos < centerX - radius * 1.5) secXPos = centerX - radius * 1.5;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(secXPos, centerY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(secXPos, centerY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#d1495b";
+            ctx.fill();
+          } else {
+            // غير معرف عند 90 و 270
+          }
+          break;
+
+        case "csc":
+          // مقلوب جا، خط عمودي على محور الصادي عند y = 1/sin(angle)
+          if (Math.abs(Math.sin(rad)) > 0.0001) {
+            const cscY = centerY - radius / Math.sin(rad);
+            // حد أقصى ضمن اللوحة
+            let cscYPos = cscY;
+            if (cscYPos < centerY - radius * 1.5) cscYPos = centerY - radius * 1.5;
+            if (cscYPos > centerY + radius * 1.5) cscYPos = centerY + radius * 1.5;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX, cscYPos);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(centerX, cscYPos, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#d1495b";
+            ctx.fill();
+          } else {
+            // غير معرف عند 0 و 180 و 360
+          }
+          break;
+      }
+
+      // كتابة شرح صغير أسفل الرسم
+      ctx.fillStyle = "#0077b6";
+      ctx.font = "16px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`زاوية: ${angle}° — دالة: ${func.toUpperCase()}`, centerX, canvas.height - 20);
     }
 
-    function updateInfo() {
+    // تحديث صندوق المعلومات
+    function updateInfo(angle, func) {
+      const rad = (angle * Math.PI / 180).toFixed(3);
+      const val = values[func][angle];
+      const desc = funcDescriptions[func];
+
+      let valComputed = "غير معرف";
+      try {
+        if (val !== "غير معرف") {
+          // نحاول حساب القيمة الرقمية
+          // نستخدم eval لكن بحذر مع استبدال الجذور والتقسيمات
+          let expression = val.replace(/÷/g, "/").replace(/√/g, "Math.sqrt");
+          valComputed = eval(expression).toFixed(3);
+        }
+      } catch {
+        valComputed = "خطأ في الحساب";
+      }
+
+      infoBox.innerHTML = `
+        <h2>دالة: ${func.toUpperCase()} (${func === 'sin' ? 'جا' : func === 'cos' ? 'جتا' : func === 'tan' ? 'ظا' : func === 'cot' ? 'ظتا' : func === 'sec' ? 'قا' : 'قتا'})</h2>
+        <p><strong>الزاوية:</strong> ${angle}° (${rad} راديان)</p>
+        <p><strong>القيمة النصية:</strong> ${val}</p>
+        <p><strong>القيمة العددية تقريبًا:</strong> ${valComputed}</p>
+        <p>${desc}</p>
+      `;
+    }
+
+    // تهيئة قائمة الزوايا
+    function populateAngles() {
+      degrees.forEach(deg => {
+        const option = document.createElement('option');
+        option.value = deg;
+        option.textContent = deg + "°";
+        angleSelect.appendChild(option);
+      });
+    }
+
+    // حدث تغيير في الاختيارات
+    function onSelectionChange() {
       const angle = parseInt(angleSelect.value);
       const func = funcSelect.value;
-      drawUnitCircle(angle);
-
-      const data = values[func][angle];
-      if (data) {
-        infoBox.innerHTML = `
-          <h2>الدالة: ${funcSelect.options[funcSelect.selectedIndex].text} (${angle}°)</h2>
-          <p>📐 <b>القيمة :</b> ${data.value}</p>
-          <p>📊 <b>الزاوية على دائرة الوحدة:</b> ${angle}°</p>
-          <p>🔍 <i>شرح مرئي يوضح العلاقة الهندسية في الدائرة</i></p>
-        `;
-      } else {
-        infoBox.innerHTML = `<p>❌ لا توجد قيمة معرفة لهذه الدالة عند هذه الزاوية.</p>`;
-      }
+      drawUnitCircle(angle, func);
+      updateInfo(angle, func);
     }
 
-    // تحميل الزوايا في القائمة
-    degrees.forEach(deg => {
-      const opt = document.createElement('option');
-      opt.value = deg;
-      opt.textContent = deg + "°";
-      angleSelect.appendChild(opt);
-    });
-
-    angleSelect.value = "30";
+    // تهيئة
+    populateAngles();
+    // نختار الافتراضي 30 درجة وجا
+    angleSelect.value = 30;
     funcSelect.value = "sin";
+    onSelectionChange();
 
-    angleSelect.addEventListener('change', updateInfo);
-    funcSelect.addEventListener('change', updateInfo);
-
-    updateInfo();
+    angleSelect.addEventListener('change', onSelectionChange);
+    funcSelect.addEventListener('change', onSelectionChange);
+  </script>
+  <!-- إضافة الزر الثابت أسفل الـ body -->
+<button id="ywdButton" aria-label="دردشة واتساب مع YWD" title="برمجة مميزة بواسطة YWD">
+    برمجة مميزة بواسطة YWD
+  </button>
+  
+  <style>
+    #ywdButton {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #25d366; /* لون واتساب */
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 0.8rem 1.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      z-index: 9999;
+      user-select: none;
+      outline-offset: 3px;
+    }
+    #ywdButton:hover,
+    #ywdButton:focus {
+      background-color: #1ebe57;
+      box-shadow: 0 8px 20px rgba(30, 176, 70, 0.7);
+      outline: none;
+    }
+  
+    @media (max-width: 480px) {
+      #ywdButton {
+        font-size: 1rem;
+        padding: 0.7rem 1.4rem;
+        border-radius: 24px;
+        bottom: 15px;
+      }
+    }
+  </style>
+  
+  <script>
+    document.getElementById('ywdButton').addEventListener('click', () => {
+      // فتح رابط دردشة واتساب مع رقمك اليمني
+      const phone = '967774502826';
+      const url = `https://wa.me/${phone}`;
+      window.open(url, '_blank', 'noopener');
+    });
   </script>
 </body>
 </html>
